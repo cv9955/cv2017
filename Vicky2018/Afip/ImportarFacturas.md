@@ -12,7 +12,8 @@ Las facturas de ventas son generadas via pagina web de afip, los datos son extra
 
 
 ### Estructura BD :
-
+![](https://raw.githubusercontent.com/cv9955/cv2017/Vicky2018/sql/cabs_facturas.sql)
+    
 ```
 CREATE TABLE  "CABS_FACTURAS" 
    (	"ID" NUMBER(*,0) NOT NULL ENABLE, 
