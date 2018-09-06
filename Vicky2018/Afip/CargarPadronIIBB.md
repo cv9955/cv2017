@@ -11,6 +11,7 @@ El momento de generar una factura de ventas, se debe calcular el valor del Impue
 - importar a Oracle (tabla temporal)
 - copiar valores a tabla CLI_IIBB
 
+
 Preparacion :
 ### Tabla CLI_IIBB
 ```
