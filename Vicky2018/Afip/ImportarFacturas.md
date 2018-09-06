@@ -12,11 +12,11 @@ Las facturas de ventas son generadas via pagina web de afip, los datos son extra
 
 
 ### Estructura BD :
-![](https://raw.githubusercontent.com/cv9955/cv2017/Vicky2018/sql/cabs_facturas.sql)
+
     
-```
+```SQL
 CREATE TABLE  "CABS_FACTURAS" 
-   (	"ID" NUMBER(*,0) NOT NULL ENABLE, 
+(	"ID" NUMBER(*,0) NOT NULL ENABLE, 
 	"FECHA" DATE, 
 	"TIPO_CAB" NUMBER, 
 	"PUNTO_VENTA" NUMBER(*,0), 
@@ -34,7 +34,7 @@ CREATE TABLE  "CABS_FACTURAS"
 	"IMPORTE_PERCEP_MUNI" NUMBER(*,2), 
 	"IMPORTE_IMP_INTERNOS" NUMBER(*,2), 
 	"CAI" VARCHAR2(14), 
-	 CONSTRAINT "CABS_FACTURAS_PK" PRIMARY KEY ("ID") ENABLE
+	CONSTRAINT "CABS_FACTURAS_PK" PRIMARY KEY ("ID") ENABLE
    )
 /
 ```
@@ -42,39 +42,39 @@ CREATE TABLE  "CABS_FACTURAS"
 
 Tablas de Paso
 
-  CREATE TABLE "VIC"."IMPORT_CABECERA" 
-  (
- Tipo_registro NUMBER,
- Fecha_comprobante VARCHAR2(8 BYTE),
- Tipo_comprobante VARCHAR2(2 BYTE),
- Controlador_Fiscal VARCHAR2(1 BYTE),
- Punto_venta VARCHAR2(4 BYTE),
- NRO_comprobante VARCHAR2(8 BYTE),
- NRO_comprobante_registrado VARCHAR2(8 BYTE),
- Cantidad_hojas VARCHAR2(3 BYTE),
- Codigo_documento_comprador VARCHAR2(2 BYTE),
- NRO_documento_comprador VARCHAR2(11 BYTE),
- denominacion_comprador VARCHAR2(30 BYTE),
- Importe_total_operacion VARCHAR2(15 BYTE),
- Importe_total_no_gravado VARCHAR2(15 BYTE),
- Importe_neto_gravado VARCHAR2(15 BYTE),
- Impuesto_liquidado VARCHAR2(15 BYTE),
- Impuesto_liquidado_2 VARCHAR2(15 BYTE),
- Importe_oper_exentas VARCHAR2(15 BYTE),
- Importe_percep_nac VARCHAR2(15 BYTE),
- Importe_percep_IIBB VARCHAR2(15 BYTE),
- Importe_percep_Muni VARCHAR2(15 BYTE),
- Importe_Imp_Internos VARCHAR2(15 BYTE),
- Transporte VARCHAR2(15 BYTE),
- Tipo_responsable VARCHAR2(2 BYTE),
- Codigos_moneda VARCHAR2(3 BYTE),
- Tipo_cambio VARCHAR2(10 BYTE),
- Cantidad_alicuotas_IVA VARCHAR2(1 BYTE),
- Codigo_operacion VARCHAR2(1 BYTE),
-CAI VARCHAR2(14 BYTE),
-Fecha_Vencimiento VARCHAR2(8 BYTE),
-Fecha_Anulacion VARCHAR2(8 BYTE)
-   );
+CREATE TABLE "VIC"."IMPORT_CABECERA" 
+(
+	 Tipo_registro NUMBER,
+	 Fecha_comprobante VARCHAR2(8 BYTE),
+	 Tipo_comprobante VARCHAR2(2 BYTE),
+	 Controlador_Fiscal VARCHAR2(1 BYTE),
+	 Punto_venta VARCHAR2(4 BYTE),
+	 NRO_comprobante VARCHAR2(8 BYTE),
+	 NRO_comprobante_registrado VARCHAR2(8 BYTE),
+	 Cantidad_hojas VARCHAR2(3 BYTE),
+	 Codigo_documento_comprador VARCHAR2(2 BYTE),
+	 NRO_documento_comprador VARCHAR2(11 BYTE),
+	 denominacion_comprador VARCHAR2(30 BYTE),
+	 Importe_total_operacion VARCHAR2(15 BYTE),
+	 Importe_total_no_gravado VARCHAR2(15 BYTE),
+	 Importe_neto_gravado VARCHAR2(15 BYTE),
+	 Impuesto_liquidado VARCHAR2(15 BYTE),
+	 Impuesto_liquidado_2 VARCHAR2(15 BYTE),
+	 Importe_oper_exentas VARCHAR2(15 BYTE),
+	 Importe_percep_nac VARCHAR2(15 BYTE),
+	 Importe_percep_IIBB VARCHAR2(15 BYTE),
+	 Importe_percep_Muni VARCHAR2(15 BYTE),
+	 Importe_Imp_Internos VARCHAR2(15 BYTE),
+	 Transporte VARCHAR2(15 BYTE),
+	 Tipo_responsable VARCHAR2(2 BYTE),
+	 Codigos_moneda VARCHAR2(3 BYTE),
+	 Tipo_cambio VARCHAR2(10 BYTE),
+	 Cantidad_alicuotas_IVA VARCHAR2(1 BYTE),
+	 Codigo_operacion VARCHAR2(1 BYTE),
+	 CAI VARCHAR2(14 BYTE),
+	 Fecha_Vencimiento VARCHAR2(8 BYTE),
+	 Fecha_Anulacion VARCHAR2(8 BYTE)
+);
 
 
 
@@ -121,10 +121,10 @@ INTO TABLE IMPORT_CABECERA
 
 
 
+### Ejecucion
 
-
-D:\> sqlldr userid=VIC/AGOS2018 control=IMPORT_FACTURAS.ctl data=CABECERA_201802.txt discard=impcabecera.dis bad=impcabecera.bad log=impcabecera.log 
-
+D:\> sqlldr userid=VIC/**** control=Cabecera.ctl data=CABECERA_YYYYMM.txt discard=impcabecera.dis bad=impcabecera.bad log=impcabecera.log 
+![](https://raw.githubusercontent.com/cv9955/cv2017/img/import_facturas001.pgn)
 
 insert into CABS_FACTURAS (FECHA,TIPO_CAB,PUNTO_VENTA,NRO_CAB,CUIT,DFISCAL,
  total_operacion ,
