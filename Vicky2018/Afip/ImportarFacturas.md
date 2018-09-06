@@ -106,7 +106,10 @@ CREATE TABLE "VIC"."IMPORT_CABECERA"
 ### Ejecucion
 ```
 D:\> sqlldr userid=VIC/xxxx control=Cabecera.ctl data=CABECERA_YYYYMM.txt discard=impcabecera.dis bad=impcabecera.bad log=impcabecera.log 
+
 D:\> sqlldr userid=VIC/xxxx control=Detalle.ctl data=Detalle_YYYYMM.txt discard=impdetalle.dis bad=impdetalle.bad log=impdetalle.log
+
+D:\> sqlplus VIC/xxxx @afip_import_facturas.sql
 ```
 ![sqlrd](/img/import_facturas001.png)
 
