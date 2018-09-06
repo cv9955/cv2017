@@ -123,9 +123,14 @@ INTO TABLE IMPORT_CABECERA
 
 ### Ejecucion
 
-D:\> sqlldr userid=VIC/**** control=Cabecera.ctl data=CABECERA_YYYYMM.txt discard=impcabecera.dis bad=impcabecera.bad log=impcabecera.log 
-![](https://raw.githubusercontent.com/cv9955/cv2017/img/import_facturas001.pgn)
+D:\> sqlldr userid=VIC/xxxx control=Cabecera.ctl data=CABECERA_YYYYMM.txt discard=impcabecera.dis bad=impcabecera.bad log=impcabecera.log 
 
+
+![factura01](https://raw.githubusercontent.com/cv9955/cv2017/img/import_facturas001.png)
+
+
+![sqlrd](https://raw.githubusercontent.com/cv2017/img/import_facturas001.png)
+    
 insert into CABS_FACTURAS (FECHA,TIPO_CAB,PUNTO_VENTA,NRO_CAB,CUIT,DFISCAL,
  total_operacion ,
  total_no_gravado ,
