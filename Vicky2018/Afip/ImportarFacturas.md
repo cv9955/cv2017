@@ -1,7 +1,5 @@
 # Importar Facturas Emitidas
 
-[Cabecera.CTL](Afip/Cabecera.ctl)
-
 Instructivo para cargar facturas emitidas via Facturacion Electronica
 
 #### Explicacion
@@ -98,16 +96,12 @@ CREATE TABLE "VIC"."IMPORT_CABECERA"
 );
 ```
 
-
-
 ## Archivos sqlldr
-
-- archivo para importar CABECERA[Cabecera.md](/Afip/Cabecera.md)
-- archivo para importar DETALLE[Detalle.md](/Afip/Detalle.md)
+> [Cabecera.CTL](Cabecera.CTL)
+> [Detalle.CTL](Detalle.CTL)
 
 ## script para procesar informacion
-[afip_import_facturas.sql](afip_import_facturas.sql)
-
+> [afip_import_facturas.sql](afip_import_facturas.sql)
 
 ### Ejecucion
 ```
