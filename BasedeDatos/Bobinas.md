@@ -2,7 +2,7 @@
 
 ## BOB_PROV
 Lista de Provedores de Papel
-´´´SQL
+```SQL
 CREATE TABLE  "BOB_PROV" 
    (	"ID" NUMBER NOT NULL ENABLE, 
 	"PROV" VARCHAR2(30) NOT NULL ENABLE, 
@@ -14,14 +14,13 @@ CREATE TABLE  "BOB_PROV"
 	"DIAMETRO" NUMBER, 
 	 CONSTRAINT "BOB_PROV_PK" PRIMARY KEY ("ID") ENABLE
    )
-´´´
-#### Comentarios
-> Activo: SI / NO
-> Diametro: Diametro inicial al ingresar bobinas nuevas
+```
+- **ACTIVO**: SI / NO
+- **DIAMETRO**: Diametro inicial al ingresar bobinas nuevas
 
 ## BOB_ORDEN
 Ordenes de Ingreso / Remito de Compra
-´´´SQL
+```SQL
 CREATE TABLE  "BOB_ORDEN" 
    (	"ID" NUMBER NOT NULL ENABLE, 
 	"PROV" NUMBER, 
@@ -31,13 +30,13 @@ CREATE TABLE  "BOB_ORDEN"
 	"CREATED_FEC" DATE, 
 	 CONSTRAINT "BOB_ORDEN_PK" PRIMARY KEY ("ID") ENABLE
    )
-´´´
+```
 #### Relaciones
-> PROV >> BOB_PROV.ID
+> PROV  -- :key:BOB_PROV.ID
 
 ## BOB
 Listado Principal
-´´´SQL
+```SQL
 CREATE TABLE  "BOB" 
    (	"ID" NUMBER NOT NULL ENABLE, 
 	"TIPO" NUMBER NOT NULL ENABLE, 
@@ -54,7 +53,7 @@ CREATE TABLE  "BOB"
 	"ORDEN_INGRESO" NUMBER NOT NULL ENABLE, 
 	 CONSTRAINT "BOB_PK" PRIMARY KEY ("ID") ENABLE
    )
-´´´
+```
 #### Relaciones
 > TIPO -> BOB_TIPO.ID 
 > ESTADO -> BOB_ESTADO.ID
@@ -66,7 +65,7 @@ CREATE TABLE  "BOB"
 - PSTOCK : porcentaje de stock [0 - 100]
 
 ## BOB_USO
-´´´SQL
+```SQL
 CREATE TABLE  "BOB_USO" 
    (	"ID" NUMBER NOT NULL ENABLE, 
 	"FECHA" DATE, 
@@ -81,7 +80,7 @@ CREATE TABLE  "BOB_USO"
 	"CREATED_FEC" DATE, 
 	 CONSTRAINT "BOB_USO_PK" PRIMARY KEY ("ID") ENABLE
    )
-´´´ 
+```
 #### Relaciones
 > LUGAR -> BOB_LUGAR.ID
 > BOBINA -> BOB.ID
