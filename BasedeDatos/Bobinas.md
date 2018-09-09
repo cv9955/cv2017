@@ -1,4 +1,5 @@
-# Bobinas Ingreso
+# Bobinas
+Ingreso y Uso
 
 ## BOB_PROV
 Lista de Provedores de Papel
@@ -32,7 +33,7 @@ CREATE TABLE  "BOB_ORDEN"
    )
 ```
 #### Relaciones
-> PROV  -- :key:BOB_PROV.ID
+- PROV :key:BOB_PROV.ID
 
 ## BOB
 Listado Principal
@@ -54,10 +55,10 @@ CREATE TABLE  "BOB"
 	 CONSTRAINT "BOB_PK" PRIMARY KEY ("ID") ENABLE
    )
 ```
-#### Relaciones
-> TIPO -> BOB_TIPO.ID 
-> ESTADO -> BOB_ESTADO.ID
-> ORDEN_INGRESO -> BOB_ORDEN.ID
+- TIPO :key:BOB_TIPO.ID 
+- ESTADO :key:BOB_ESTADO.ID
+- ORDEN_INGRESO :key:BOB_ORDEN.ID
+
 #### Comentarios
 - FORMATO: ancho de papel [cm]
 - GRAMAJE: peso por metro cuadrado [grs/m2] 
@@ -82,8 +83,8 @@ CREATE TABLE  "BOB_USO"
    )
 ```
 #### Relaciones
-> LUGAR -> BOB_LUGAR.ID
-> BOBINA -> BOB.ID
+- LUGAR	:key:BOB_LUGAR.ID
+- BOBINA :key:BOB.ID
 #### Comentarios
 - ORDEN: [0..N] ordena dentro de su lugar de uso [FECHA / LUGAR / ORDEN]
 - INICIO : Diametro de la bobina al iniciar su uso
