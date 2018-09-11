@@ -1,21 +1,21 @@
-# Afip
+# Cargar Padron Ingrasos Brutos
 
-## Padron IIBB
 Instructivo para actualizar valor de retencion de IIBB desde el padron publicado por Afip Mensualmente
 
 #### Explicacion
-El momento de generar una factura de ventas, se debe calcular el valor del Impuesto IIBB multiplicando el Neto a Facturar por un valor publicado mensualmento por la Afip, para ello se debe descargar un archivo que contiene el listado completo de Numero de Cuit con su respectivo valor. se importa el listado en su totalidad en una tabla temporal (PADRON ARBA) para luego replicar a la tabla permanete CLI_IIBB solo los datos necesario segun Numero de Cuit. La tabla temporal se conserva hasta finalizado el periodo para consultar en caso de carga de clientes nuevos
+El momento de generar una factura de ventas, se debe calcular el valor del Impuesto IIBB multiplicando el Neto a Facturar por un valor publicado mensualmento por la Afip, para ello se debe descargar un archivo que contiene el listado completo de Numero de Cuit con su respectivo valor. 
+Se importa el listado en su totalidad en una tabla temporal (PADRON ARBA) para luego replicar a la tabla permanete CLI_IIBB solo los datos necesarios segun Numero de Cuit. La tabla temporal se conserva hasta finalizado el periodo para consultar en caso de carga de clientes nuevos
 
-## Pasos a seguir:
-- descargar archivo desde http://www.afip.gov.ar/genericos/cinscripcion/archivocompleto.asp
+### Pasos a seguir:
+- descargar archivo "PadronRgsPer092018.txt" http://www.afip.gov.ar/genericos/cinscripcion/archivocompleto.asp
 - importar a Oracle (tabla temporal)
 - copiar valores a tabla CLI_IIBB
 
 
-Preparacion :
-### Tabla CLI_IIBB
+### Estructura BD :
+
 ```
-TABLA CLI_IIBB
+CLI_IIBB
   ID pk
   CUIT varchar(11)
   DESDE date
@@ -23,7 +23,7 @@ TABLA CLI_IIBB
   VALOR number
 ```
 
-### Tabla temporal PADRON_ARBA
+#### Tabla temporal
 ```
 CREATE TABLE  "PADRON_ARBA"  (
   "TIPO" VARCHAR2(20), 
@@ -41,7 +41,7 @@ CREATE TABLE  "PADRON_ARBA"  (
 /
 ```
 
-### Archivo import_padron.ctl
+#### Archivo import_padron.ctl
 ```
 Load DATA 
   truncate 
@@ -52,11 +52,14 @@ Load DATA
 
 ### Ejecucion
 
-Copiar el archivo descargado con el nombre "PadronRgsPer092018.txt" a D:
-ejecutar Cmd (modo admin)
+Copiar el archivo descargado con el nombre "PadronRgsPer092018.txt" a D:\
+
+ejecutar CMD (modo admin)
+
 ```
 D:\> sqlldr control=import_padron.ctl data=PadronRgsPer092018.txt discard=datos.dis bad=datos.bad log=datos.log 
 ```
+
 ejecutar sqlPlus
 
 ```
