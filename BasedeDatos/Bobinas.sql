@@ -234,20 +234,47 @@ create or replace TRIGGER BOB_TRG_USOBOBINA AFTER
     WHERE ID = vBobina;
     
   END;
-  /
+/
   
-
-create or replace TRIGGER BOB_USO_TRG 
+CREATE OR REPLACE TRIGGER BOB_USO_TRG 
 BEFORE INSERT ON BOB_USO 
 FOR EACH ROW 
-DECLARE
-  v_username varchar2(20);
 BEGIN
-  IF INSERTING AND :NEW.ID IS NULL THEN
-      SELECT BOB_USO_SEQ.NEXTVAL INTO :NEW.ID FROM SYS.DUAL;
-  END IF;
-​
-  :new.created_fec := sysdate;
-  :new.created_by := nvl(v('APP_USER'),USER);
+    -- KEY
+    SELECT BOB_USO_SEQ.NEXTVAL INTO :NEW.ID FROM SYS.DUAL;
+
+    :new.created_fec := sysdate;
+    :new.created_by := nvl(v('APP_USER'),USER);
+    
+    -- ORDEN
+    SELECT NVL(MAX(ORDEN)+1,0) INTO :NEW.ORDEN 
+        FROM BOB_USO 
+        WHERE FECHA = :NEW.FECHA 
+        AND LUGAR = :NEW.LUGAR;
+
+    -- DIAMETRO INICIAL
+	UPDATE BOB
+		SET DIAMETRO = :NEW.INICIO
+		WHERE ID = :NEW.BOBINA
+		AND PSTOCK = 100;
+        
+    -- DIAMETRO FINAL
+    IF :NEW.FIN > 20 THEN 
+        :NEW.FIN := 0;
+    END IF;
+
+    -- RENDIMIENTO ONDA
+    IF :NEW.LUGAR = 2 THEN
+        :NEW.REND := 1.35;
+    ELSE
+        :NEW.REND := 1;
+    END IF;
+    
+    -- CALCULO USO
+    SELECT 
+        PSTOCK - POWER(:NEW.FIN / DIAMETRO,2)*100 
+        INTO :NEW.USO
+        FROM BOB WHERE ID = :NEW.BOBINA;
+
 END;
 /

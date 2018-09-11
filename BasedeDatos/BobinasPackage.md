@@ -1,72 +1,34 @@
-create or replace PACKAGE  "BOB_PKG" AS  
-      
-    PROCEDURE EliminarUso (p_idUso Bob_Uso.id%type); 
+# BOB_PKG  
+
      
-    PROCEDURE SubirOrdenUso (p_idUso Bob_Uso.id%type); 
+## PROCEDURE EliminarUso (p_idUso)
      
-    PROCEDURE BajarOrdenUso (p_idUso Bob_Uso.id%type); 
+## PROCEDURE SubirOrdenUso (p_idUso)
      
-    PROCEDURE IngresarOrden (p_idProv Bob_Prov.id%type, p_remito Number); 
+## PROCEDURE BajarOrdenUso (p_idUso)
      
-    PROCEDURE IngresarBobinas (Cant  number,Tipo  bob.tipo%type,  Formato bob.formato%type,  Gramaje bob.gramaje%type); 
+## PROCEDURE IngresarOrden (p_idProv, p_remito)
      
-    FUNCTION DiametroActual (p_bobina bob.id%type) RETURN NUMBER ; 
+## PROCEDURE IngresarBobinas (Cant, Tipo, Formato, Gramaje)
+     
+## FUNCTION DiametroActual (p_bobina) RETURN NUMBER
  
-    FUNCTION PesoActual (p_bobina bob.id%type) RETURN NUMBER ; 
+## FUNCTION PesoActual (p_bobina) RETURN NUMBER
  
-    FUNCTION MetrosActual (p_bobina bob.id%type) RETURN NUMBER ; 
+## FUNCTION MetrosActual (p_bobina) RETURN NUMBER
  
-    FUNCTION MetrosUso (p_uso bob_uso.id%type) RETURN NUMBER ; 
+## FUNCTION MetrosUso (p_uso) RETURN NUMBER
  
-    PROCEDURE EliminarOrden (p_orden Bob_Orden.id%type); 
+## PROCEDURE EliminarOrden (p_orden)
      
-    FUNCTION MetrosCorrugado (p_id_Cab Cabs_corr_d.id%type) RETURN NUMBER ;  
+## FUNCTION MetrosCorrugado (p_id_Cab) RETURN NUMBER
      
-     
-END BOB_PKG; 
 
 CREATE OR REPLACE PACKAGE BODY BOB_PKG AS
 	G_IDORDEN BOB_ORDEN.ID%TYPE;
 	ID_BOBINA BOB.ID%TYPE;
 	G_DIAMETRO NUMBER; -- CARGAR DIAMETRO INICIAL
-	SELECT NVL(MAX(ORDEN)+1,0) 
-	INTO V_ORDEN 
-	FROM BOB_USO
-	WHERE FECHA = P_FECHA 
-	AND LUGAR = P_LUGAR;
 
-	SELECT DIAMETRO,PSTOCK 
-	INTO V_DIAMETRO,V_PSTOCK 
-	FROM BOB
-	WHERE ID = P_BOBINA;
-
-	IF V_PSTOCK = 100 THEN
-		UPDATE BOB
-			SET DIAMETRO = P_INICIO
-			WHERE ID = P_BOBINA;
-		V_DIAMETRO := P_INICIO;
-		V_DIAMETROACTUAL := P_INICIO;
-	ELSE
-		V_DIAMETROACTUAL := BOB_PKG.DIAMETROACTUAL(P_BOBINA);  
-	END IF;
-
-	IF P_FIN >= V_DIAMETROACTUAL THEN
-		RAISE_APPLICATION_ERROR(-20001,'DIAMETRO FINAL DEBE SER MENOR QUE DIAMETRO ACTUAL');
-	END IF;
-	
-	V_PRESTO := POWER(P_FIN / V_DIAMETRO,2)*100;
-	V_PUSO := V_PSTOCK - V_PRESTO;
-	
-	IF P_LUGAR = 2 THEN
-		V_REND := 1.35;
-	ELSE
-		V_REND := 1;
-	END IF;
-	
-	INSERT INTO BOB_USO
-		(FECHA,LUGAR,ORDEN,BOBINA,INICIO,FIN,USO,REND)
-		VALUES(P_FECHA,P_LUGAR,V_ORDEN,P_BOBINA,V_DIAMETROACTUAL,P_FIN,V_PUSO,V_REND);
-END USAR;
 
 PROCEDURE ELIMINARUSO(P_IDUSO BOB_USO.ID%TYPE)	AS
 	V_ORDEN BOB_USO.ORDEN%TYPE;
