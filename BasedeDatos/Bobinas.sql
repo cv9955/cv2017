@@ -111,4 +111,141 @@ insert into bob_estado (id,estado) values (2,'ENTERA');
 insert into bob_estado (id,estado) values (3,'PUCHO');
 insert into bob_estado (id,estado) values (-1,'ANULADA');
 insert into bob_estado (id,estado) values (-2,'DEVOLUCION');
+
+insert into bob_prov (id,prov) values (1,'Papelera 1');
+
+insert into bob_orden (id,prov,remito,fecha) values (1,1,1,to_date('01/01/2001','DD/MM/YYYY'));
+
+insert into bob (id,tipo,formato,gramaje,peso,diametro,pstock,estado,orden_ingreso)
+	values (1000,1,110,130,1000,120,100,1,1);
+ 
+/
+
+create or replace TRIGGER BOB_ORDEN_TRG 
+BEFORE INSERT ON BOB_ORDEN 
+FOR EACH ROW 
+DECLARE
+  v_username varchar2(20);
+BEGIN
+  :new.created_fec := sysdate;
+  :new.created_by := nvl(v('APP_USER'),USER);
+END;
+
+/
+
+create or replace TRIGGER BOB_PROV_TRG 
+BEFORE INSERT ON BOB_PROV 
+FOR EACH ROW 
+BEGIN
+    IF INSERTING AND :NEW.ID IS NULL THEN
+      SELECT BOB_PROV_SEQ.NEXTVAL INTO :NEW.ID FROM SYS.DUAL;
+    END IF;
+      :new.created_fec := sysdate;
+      :new.created_by := nvl(v('APP_USER'),USER);
+END;
+
+/
+create or replace TRIGGER BOB_TRG_000 
+BEFORE INSERT ON BOB 
+FOR EACH ROW 
+DECLARE
+  v_username varchar2(20);
+BEGIN
+		
+		-- tipo comun = 0  onda= 1 segun gramaje
+	if :new.tipo in (0,1) then
+		if :new.gramaje < 140 then
+			:new.tipo := 0;
+		else
+			:new.tipo := 1;
+		end if;	
+	end if;	
+
+  :new.created_fec := sysdate;
+  :new.created_by := nvl(v('APP_USER'),USER);
+END;
+/
+create or replace TRIGGER BOB_TRG_CONTROL_ESTADO_2 
+BEFORE UPDATE OF PESO ON BOB 
+FOR EACH ROW 
+BEGIN
+  IF :NEW.ESTADO = 0 THEN
+      :NEW.ESTADO := 1;
+  END IF;    
+END;
+
+/
+
+create or replace TRIGGER BOB_TRG_USOBOBINA AFTER
+  UPDATE OR INSERT OR
+  DELETE ON BOB_USO FOR EACH ROW 
+  DECLARE 
+  vBobina BOB.ID%TYPE;
+  vPstock BOB.PSTOCK%TYPE;
+  vEstado BOB.ESTADO%TYPE;
+  BEGIN
+    
+    IF UPDATING THEN
+      if :new.BOBINA <> :old.BOBINA then
+         Raise_Application_Error(-20099, 'No se Puede Modificar Nro de Bobina en Uso.');
+      end if;
+    END IF;
+  
+    IF INSERTING OR UPDATING THEN
+      vBobina := :new.BOBINA;
+    ELSE
+      vBobina := :old.BOBINA;
+    END IF;
+    
+    SELECT PSTOCK,ESTADO INTO vPstock,vEstado 
+    FROM BOB WHERE ID = vBobina;
+    
+    IF DELETING or UPDATING THEN 
+      if :old.USO > (100 - vPstock) then
+        vPstock := 100 ; -- el uso eliminado estaba mal cargado   
+      else
+        vPstock :=  vPstock + :old.USO;
+      end if;
+    END IF;    
+    
+    IF INSERTING or UPDATING THEN
+      if :new.uso > vPstock then
+        vPstock := 0; -- el Puso es mayor que el stock actual
+        Raise_Application_Error(-20099, '%USO es mayor que el Stock Actual.');
+      else
+        vPstock := GREATEST (vPstock - :new.USO,0);
+      end if;
+    END IF;
+
+    IF vEstado >= 0 THEN
+      vEstado  :=
+      CASE vPstock
+      WHEN 100 THEN        1
+      WHEN 0 THEN        3
+      ELSE        2
+      END;
+    END IF;
+    
+    UPDATE BOB 
+    SET PSTOCK = vPSTOCK ,
+    ESTADO = vEstado
+    WHERE ID = vBobina;
+    
+  END;
+  /
+  
+
+create or replace TRIGGER BOB_USO_TRG 
+BEFORE INSERT ON BOB_USO 
+FOR EACH ROW 
+DECLARE
+  v_username varchar2(20);
+BEGIN
+  IF INSERTING AND :NEW.ID IS NULL THEN
+      SELECT BOB_USO_SEQ.NEXTVAL INTO :NEW.ID FROM SYS.DUAL;
+  END IF;
+​
+  :new.created_fec := sysdate;
+  :new.created_by := nvl(v('APP_USER'),USER);
+END;
 /

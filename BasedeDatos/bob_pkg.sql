@@ -1,3 +1,32 @@
+create or replace PACKAGE  "BOB_PKG" AS  
+ 
+    PROCEDURE Usar (p_fecha Date, p_lugar bob_uso.lugar%type, p_bobina bob_uso.bobina%type,p_inicio Number,p_fin Number); 
+     
+    PROCEDURE EliminarUso (p_idUso Bob_Uso.id%type); 
+     
+    PROCEDURE SubirOrdenUso (p_idUso Bob_Uso.id%type); 
+     
+    PROCEDURE BajarOrdenUso (p_idUso Bob_Uso.id%type); 
+     
+    PROCEDURE IngresarOrden (p_idProv Bob_Prov.id%type, p_remito Number); 
+     
+    PROCEDURE IngresarBobinas (Cant  number,Tipo  bob.tipo%type,  Formato bob.formato%type,  Gramaje bob.gramaje%type); 
+     
+    FUNCTION DiametroActual (p_bobina bob.id%type) RETURN NUMBER ; 
+ 
+    FUNCTION PesoActual (p_bobina bob.id%type) RETURN NUMBER ; 
+ 
+    FUNCTION MetrosActual (p_bobina bob.id%type) RETURN NUMBER ; 
+ 
+    FUNCTION MetrosUso (p_uso bob_uso.id%type) RETURN NUMBER ; 
+ 
+    PROCEDURE EliminarOrden (p_orden Bob_Orden.id%type); 
+     
+    FUNCTION MetrosCorrugado (p_id_Cab Cabs_corr_d.id%type) RETURN NUMBER ;  
+     
+     
+END BOB_PKG; 
+
 CREATE OR REPLACE PACKAGE BODY BOB_PKG AS
 	G_IDORDEN BOB_ORDEN.ID%TYPE;
 	ID_BOBINA BOB.ID%TYPE;
