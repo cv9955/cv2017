@@ -4,6 +4,25 @@ CREATE TABLE  "BOB_ESTADO"
 	 CONSTRAINT "BOB_ESTADO_PK" PRIMARY KEY ("ID") ENABLE
    )
 /
+CREATE TABLE  "BOB_LUGAR" 
+   (	"ID" NUMBER NOT NULL ENABLE, 
+	"LUGAR" VARCHAR2(20), 
+	"KEY" VARCHAR2(1), 
+	 CONSTRAINT "BOB_LUGAR_PK" PRIMARY KEY ("ID") ENABLE
+   )
+/
+CREATE TABLE  "BOB_TIPO" 
+   (	"ID" NUMBER NOT NULL ENABLE, 
+	"KEY" CHAR(1) NOT NULL ENABLE, 
+	"TIPO_PAPEL" VARCHAR2(20) NOT NULL ENABLE, 
+	"BACK_COLOR" NUMBER, 
+	"FORE_COLOR" NUMBER, 
+	"GRAMAJE_INI" NUMBER, 
+	"STYLE" VARCHAR2(20), 
+	"PRECIO_ACTUAL" NUMBER, 
+	 CONSTRAINT "BOB_TIPO_PK" PRIMARY KEY ("ID") ENABLE
+   )
+/
 CREATE TABLE  "BOB_PROV" 
    (	"ID" NUMBER NOT NULL ENABLE, 
 	"PROV" VARCHAR2(30) NOT NULL ENABLE, 
@@ -26,18 +45,6 @@ CREATE TABLE  "BOB_ORDEN"
 	 CONSTRAINT "BOB_ORDEN_PK" PRIMARY KEY ("ID") ENABLE
    )
 /
-CREATE TABLE  "BOB_TIPO" 
-   (	"ID" NUMBER NOT NULL ENABLE, 
-	"KEY" CHAR(1) NOT NULL ENABLE, 
-	"TIPO_PAPEL" VARCHAR2(20) NOT NULL ENABLE, 
-	"BACK_COLOR" NUMBER, 
-	"FORE_COLOR" NUMBER, 
-	"GRAMAJE_INI" NUMBER, 
-	"STYLE" VARCHAR2(20), 
-	"PRECIO_ACTUAL" NUMBER, 
-	 CONSTRAINT "BOB_TIPO_PK" PRIMARY KEY ("ID") ENABLE
-   )
-/
 CREATE TABLE  "BOB" 
    (	"ID" NUMBER NOT NULL ENABLE, 
 	"TIPO" NUMBER NOT NULL ENABLE, 
@@ -53,13 +60,6 @@ CREATE TABLE  "BOB"
 	"UPDATED_FEC" DATE, 
 	"ORDEN_INGRESO" NUMBER NOT NULL ENABLE, 
 	 CONSTRAINT "BOB_PK" PRIMARY KEY ("ID") ENABLE
-   )
-/
-CREATE TABLE  "BOB_LUGAR" 
-   (	"ID" NUMBER NOT NULL ENABLE, 
-	"LUGAR" VARCHAR2(20), 
-	"KEY" VARCHAR2(1), 
-	 CONSTRAINT "BOB_LUGAR_PK" PRIMARY KEY ("ID") ENABLE
    )
 /
 CREATE TABLE  "BOB_USO" 
@@ -94,4 +94,21 @@ ALTER TABLE  "BOB_USO" ADD CONSTRAINT "BOB_USO_FK" FOREIGN KEY ("BOBINA")
 /
 ALTER TABLE  "BOB_USO" ADD CONSTRAINT "BOB_USO_LUGAR_FK" FOREIGN KEY ("LUGAR")
 	  REFERENCES  "BOB_LUGAR" ("ID") ENABLE
+/
+
+insert into bob_lugar (id,lugar,key) values (1,'INTERIOR','A');
+insert into bob_lugar (id,lugar,key) values (2,'ONDA','B');
+insert into bob_lugar (id,lugar,key) values (3,'LINNER','C');
+
+insert into bob_tipo (id,key,tipo_papel) values (0,'C','COMUN');
+insert into bob_tipo (id,key,tipo_papel) values (1,'O','ONDA');
+insert into bob_tipo (id,key,tipo_papel) values (2,'L','LINNER');
+insert into bob_tipo (id,key,tipo_papel) values (3,'M','MISIONERO');
+insert into bob_tipo (id,key,tipo_papel) values (4,'B','BLANCO');
+
+insert into bob_estado (id,estado) values (0,'NUEVA');
+insert into bob_estado (id,estado) values (2,'ENTERA');
+insert into bob_estado (id,estado) values (3,'PUCHO');
+insert into bob_estado (id,estado) values (-1,'ANULADA');
+insert into bob_estado (id,estado) values (-2,'DEVOLUCION');
 /
