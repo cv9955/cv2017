@@ -1,6 +1,8 @@
 # Bobinas
 Ingreso y Uso
 
+![BOBINAS](/img/bobinas.png)
+
 ## BOB_PROV
 Lista de Provedores de Papel
 ```SQL
