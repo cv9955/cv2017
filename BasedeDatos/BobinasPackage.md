@@ -1,7 +1,6 @@
 # BOB_PKG  
      
-## SubirOrdenUso
-Alterna el Orden diario hacia arriba 
+## SubirOrdenUso (p_idUso)
 ```SQL
 SELECT ID_1,ORDEN_1,ORDEN_2 
 	INTO VID1,VORDEN1,VORDEN2
@@ -22,10 +21,9 @@ UPDATE BOB_USO
 
 EXCEPTION WHEN NO_DATA_FOUND THEN
 	RAISE_APPLICATION_ERROR(-20001,'no puede SUBIR mas');
-```	
-    
-## BajarOrdenUso
-Alterna el Orden diario hacia arriba 
+```
+   
+## BajarOrdenUso (p_idUso)
 ```SQL
 SELECT ID_1,ORDEN_1,ORDEN_2 
 	INTO VID1,VORDEN1,VORDEN2
@@ -50,7 +48,7 @@ EXCEPTION WHEN NO_DATA_FOUND THEN
 ```
      
    
-## DiametroActual (p_bobina) RETURN NUMBER
+## DiametroActual (p_bobina)
 ```SQL
 SELECT ROUND(DIAMETRO * SQRT(PSTOCK / 100),0) 
 	INTO V_DIAMETRO 
@@ -58,7 +56,7 @@ SELECT ROUND(DIAMETRO * SQRT(PSTOCK / 100),0)
 	WHERE ID = P_BOBINA; 
 ```
  
-## PesoActual (p_bobina) RETURN NUMBER
+## PesoActual (p_bobina)
 ```SQL
 SELECT ROUND (PESO * PSTOCK / 100) 
 	INTO V_PESO 
@@ -66,7 +64,7 @@ SELECT ROUND (PESO * PSTOCK / 100)
 	WHERE ID = P_BOBINA;
 ```
  
-## MetrosActual (p_bobina) RETURN NUMBER
+## MetrosActual (p_bobina)
 ```SQL
 SELECT ROUND (PESO * PSTOCK /GRAMAJE / FORMATO * 1000) 
 	INTO V_METROS 
@@ -74,7 +72,7 @@ SELECT ROUND (PESO * PSTOCK /GRAMAJE / FORMATO * 1000)
 	WHERE ID = P_BOBINA;
 ```
  
-## MetrosUso (p_uso) RETURN NUMBER
+## MetrosUso (p_uso)
 ```SQL
 SELECT ROUND (PESO * USO /REND /GRAMAJE / FORMATO * 1000)
 	INTO V_METROS 
@@ -83,18 +81,20 @@ SELECT ROUND (PESO * USO /REND /GRAMAJE / FORMATO * 1000)
 	AND BOB_USO.BOBINA = BOB.ID;
 ```
 
-## PrecioPapel (p_tipo) RETRUN NUMBER
+## PrecioPapel (p_tipo)
 ```SQL  
-SELECT PRECIO INTO V_PRECIO
+SELECT PRECIO 
+	INTO V_PRECIO
 	FROM COTIZ_PAPEL
 	WHERE TIPO_PAPEL = P_TIPO
 	AND SYSDATE BETWEEN DESDE AND NVL(HASTA,SYSDATE);
 ```   
 
-## Stock (p_tipo) RETURN NUMBER
+## Stock (p_tipo)
 ```SQL
-SELECT FLOOR(SUM( PESO * PSTOCK) / 100) INTO V_KILOS
-		FROM BOB
-		WHERE ESTADO IN (1,2)
-		AND TIPO = P_TIPO;
+SELECT FLOOR(SUM( PESO * PSTOCK) / 100) 
+	INTO V_KILOS
+	FROM BOB
+	WHERE ESTADO IN (1,2)
+	AND TIPO = P_TIPO;
 ```
