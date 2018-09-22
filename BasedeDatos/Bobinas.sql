@@ -96,9 +96,9 @@ ALTER TABLE  "BOB_USO" ADD CONSTRAINT "BOB_USO_LUGAR_FK" FOREIGN KEY ("LUGAR")
 	  REFERENCES  "BOB_LUGAR" ("ID") ENABLE
 /
 
-insert into bob_lugar (id,lugar,key) values (1,'INTERIOR','A');
-insert into bob_lugar (id,lugar,key) values (2,'ONDA','B');
-insert into bob_lugar (id,lugar,key) values (3,'LINNER','C');
+insert into bob_lugar (id,key,lugar) values (1,'A','INTERIOR');
+insert into bob_lugar (id,key,lugar) values (2,'B','ONDA');
+insert into bob_lugar (id,key,lugar) values (3,'C','LINNER');
 
 insert into bob_tipo (id,key,tipo_papel) values (0,'C','COMUN');
 insert into bob_tipo (id,key,tipo_papel) values (1,'O','ONDA');
@@ -107,8 +107,9 @@ insert into bob_tipo (id,key,tipo_papel) values (3,'M','MISIONERO');
 insert into bob_tipo (id,key,tipo_papel) values (4,'B','BLANCO');
 
 insert into bob_estado (id,estado) values (0,'NUEVA');
-insert into bob_estado (id,estado) values (2,'ENTERA');
-insert into bob_estado (id,estado) values (3,'PUCHO');
+insert into bob_estado (id,estado) values (1,'ENTERA');
+insert into bob_estado (id,estado) values (2,'PUCHO');
+insert into bob_estado (id,estado) values (3,'USADA');
 insert into bob_estado (id,estado) values (-1,'ANULADA');
 insert into bob_estado (id,estado) values (-2,'DEVOLUCION');
 
@@ -121,16 +122,16 @@ insert into bob (id,tipo,formato,gramaje,peso,diametro,pstock,estado,orden_ingre
  
 /
 
-create or replace TRIGGER BOB_ORDEN_TRG 
-BEFORE INSERT ON BOB_ORDEN 
-FOR EACH ROW 
-DECLARE
-  v_username varchar2(20);
+CREATE OR REPLACE TRIGGER BOB_ORDEN_TRG 
+    BEFORE INSERT ON BOB_ORDEN 
+    FOR EACH ROW 
 BEGIN
-  :new.created_fec := sysdate;
-  :new.created_by := nvl(v('APP_USER'),USER);
+    IF :NEW.ID IS NULL THEN
+      SELECT MAX(ID) +1 INTO :NEW.ID FROM BOB_ORDEN;
+    END IF;
+    :NEW.CREATED_FEC := SYSDATE;  
+    :NEW.CREATED_BY := NVL(V('APP_USER'),USER);
 END;
-
 /
 
 -- BRANCH BOB001-borrar seq bob prov
@@ -146,27 +147,35 @@ BEGIN
 END;
 
 /
-
 create or replace TRIGGER BOB_TRG_000 
 BEFORE INSERT ON BOB 
 FOR EACH ROW 
-DECLARE
-  v_username varchar2(20);
 BEGIN
-		
-		-- tipo comun = 0  onda= 1 segun gramaje
-	if :new.tipo in (0,1) then
-		if :new.gramaje < 140 then
-			:new.tipo := 0;
-		else
-			:new.tipo := 1;
-		end if;	
-	end if;	
+    --- NRO BOBINA
+     IF :NEW.ID IS NULL THEN
+      SELECT MAX(ID) +1 INTO :NEW.ID FROM BOB;
+     END IF;  
+     
+	-- AUDIT
+	:NEW.CREATED_FEC := SYSDATE;
+	:NEW.CREATED_BY := NVL(V('APP_USER'),USER);
 
-  :new.created_fec := sysdate;
-  :new.created_by := nvl(v('APP_USER'),USER);
+	-- CONTROL TIPO ONDA / COMUNN
+	IF :NEW.TIPO IN (0,1) THEN
+		IF :NEW.GRAMAJE < 140 THEN
+			:NEW.TIPO := 0;
+		ELSE
+			:NEW.TIPO := 1;
+		END IF;	
+	END IF;	
+    
+    :NEW.DIAMETRO := NVL(:NEW.DIAMETRO,120);
+    :NEW.PSTOCK := 100;
+    :NEW.ESTADO := 0;
+
 END;
 /
+
 create or replace TRIGGER BOB_TRG_CONTROL_ESTADO_2 
 BEFORE UPDATE OF PESO ON BOB 
 FOR EACH ROW 
@@ -175,79 +184,89 @@ BEGIN
       :NEW.ESTADO := 1;
   END IF;    
 END;
+/
 
+create or replace TRIGGER BOB_TRG_DELETE 
+	BEFORE DELETE ON BOB
+	FOR EACH ROW
+BEGIN
+		IF :OLD.PSTOCK < 100 THEN
+		  Raise_Application_Error(-20099, 'Cannot DELETE BOBINA USADA.');
+		END IF;
+END;
+/
+
+CREATE OR REPLACE TRIGGER BOB_TRG_ESTADO
+	BEFORE UPDATE OF PSTOCK ON BOB 
+	FOR EACH ROW
+BEGIN
+	IF :OLD.ESTADO IN (1,2,3) AND :NEW.ESTADO IN (1,2,3) THEN
+        :NEW.ESTADO := CASE :NEW.PSTOCK 
+            WHEN 0 THEN 3 WHEN 100 THEN 1 ELSE 2 END;
+		END IF;
+END;
+/
+
+create or replace TRIGGER BOB_TRG_NOUPDATE 
+BEFORE UPDATE OF FECHA,LUGAR,BOBINA,USO ON BOB_USO 
+BEGIN
+    Raise_Application_Error(-20099, 'Cannot UPDATE this TABLE.');
+END;
 /
 
 create or replace TRIGGER BOB_TRG_USOBOBINA AFTER
-  UPDATE OR INSERT OR
-  DELETE ON BOB_USO FOR EACH ROW 
-  DECLARE 
-  vBobina BOB.ID%TYPE;
-  vPstock BOB.PSTOCK%TYPE;
-  vEstado BOB.ESTADO%TYPE;
+  INSERT OR DELETE ON BOB_USO FOR EACH ROW 
   BEGIN
-    
-    IF UPDATING THEN
-      if :new.BOBINA <> :old.BOBINA then
-         Raise_Application_Error(-20099, 'No se Puede Modificar Nro de Bobina en Uso.');
-      end if;
-    END IF;
-  
-    IF INSERTING OR UPDATING THEN
-      vBobina := :new.BOBINA;
+    IF INSERTING THEN
+        UPDATE BOB B1
+            SET PSTOCK = B1.PSTOCK - :NEW.USO 
+            WHERE ID = :NEW.BOBINA;
     ELSE
-      vBobina := :old.BOBINA;
-    END IF;
-    
-    SELECT PSTOCK,ESTADO INTO vPstock,vEstado 
-    FROM BOB WHERE ID = vBobina;
-    
-    IF DELETING or UPDATING THEN 
-      if :old.USO > (100 - vPstock) then
-        vPstock := 100 ; -- el uso eliminado estaba mal cargado   
-      else
-        vPstock :=  vPstock + :old.USO;
-      end if;
-    END IF;    
-    
-    IF INSERTING or UPDATING THEN
-      if :new.uso > vPstock then
-        vPstock := 0; -- el Puso es mayor que el stock actual
-        Raise_Application_Error(-20099, '%USO es mayor que el Stock Actual.');
-      else
-        vPstock := GREATEST (vPstock - :new.USO,0);
-      end if;
-    END IF;
-
-    IF vEstado >= 0 THEN
-      vEstado  :=
-      CASE vPstock
-      WHEN 100 THEN        1
-      WHEN 0 THEN        3
-      ELSE        2
-      END;
-    END IF;
-    
-    UPDATE BOB 
-    SET PSTOCK = vPSTOCK ,
-    ESTADO = vEstado
-    WHERE ID = vBobina;
-    
+        UPDATE BOB B1
+            SET PSTOCK =  B1.PSTOCK + :OLD.USO
+            WHERE ID = :OLD.BOBINA;
+    END IF;        
   END;
-  /
+/
   
-
 create or replace TRIGGER BOB_USO_TRG 
-BEFORE INSERT ON BOB_USO 
-FOR EACH ROW 
-DECLARE
-  v_username varchar2(20);
+	BEFORE INSERT ON BOB_USO 
+	FOR EACH ROW 
 BEGIN
-  IF INSERTING AND :NEW.ID IS NULL THEN
-      SELECT BOB_USO_SEQ.NEXTVAL INTO :NEW.ID FROM SYS.DUAL;
-  END IF;
-​
-  :new.created_fec := sysdate;
-  :new.created_by := nvl(v('APP_USER'),USER);
+    -- KEY
+    SELECT BOB_USO_SEQ.NEXTVAL INTO :NEW.ID FROM SYS.DUAL;
+
+    :new.created_fec := sysdate;
+    :new.created_by := nvl(v('APP_USER'),USER);
+    
+    -- ORDEN
+    SELECT NVL(MAX(ORDEN)+1,0) INTO :NEW.ORDEN 
+        FROM BOB_USO 
+        WHERE FECHA = :NEW.FECHA 
+        AND LUGAR = :NEW.LUGAR;
+
+    -- DIAMETRO INICIAL
+	UPDATE BOB
+		SET DIAMETRO = :NEW.INICIO
+		WHERE ID = :NEW.BOBINA
+		AND PSTOCK = 100;
+        
+    -- DIAMETRO FINAL
+    IF :NEW.FIN < 20 THEN 
+        :NEW.FIN := 0;
+    END IF;
+
+    -- RENDIMIENTO ONDA
+    IF :NEW.LUGAR = 2 THEN
+        :NEW.REND := 1.35;
+    ELSE
+        :NEW.REND := 1;
+    END IF;
+    
+    -- CALCULO USO
+    SELECT 
+        PSTOCK - POWER(:NEW.FIN / DIAMETRO,2)*100 
+        INTO :NEW.USO
+        FROM BOB WHERE ID = :NEW.BOBINA;
 END;
 /

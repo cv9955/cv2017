@@ -1,31 +1,14 @@
-create or replace PACKAGE  "BOB_PKG" AS  
- 
-    PROCEDURE Usar (p_fecha Date, p_lugar bob_uso.lugar%type, p_bobina bob_uso.bobina%type,p_inicio Number,p_fin Number); 
-     
-    PROCEDURE EliminarUso (p_idUso Bob_Uso.id%type); 
-     
-    PROCEDURE SubirOrdenUso (p_idUso Bob_Uso.id%type); 
-     
-    PROCEDURE BajarOrdenUso (p_idUso Bob_Uso.id%type); 
-     
-    PROCEDURE IngresarOrden (p_idProv Bob_Prov.id%type, p_remito Number); 
-     
-    PROCEDURE IngresarBobinas (Cant  number,Tipo  bob.tipo%type,  Formato bob.formato%type,  Gramaje bob.gramaje%type); 
-     
-    FUNCTION DiametroActual (p_bobina bob.id%type) RETURN NUMBER ; 
- 
-    FUNCTION PesoActual (p_bobina bob.id%type) RETURN NUMBER ; 
- 
-    FUNCTION MetrosActual (p_bobina bob.id%type) RETURN NUMBER ; 
- 
-    FUNCTION MetrosUso (p_uso bob_uso.id%type) RETURN NUMBER ; 
- 
-    PROCEDURE EliminarOrden (p_orden Bob_Orden.id%type); 
-     
-    FUNCTION MetrosCorrugado (p_id_Cab Cabs_corr_d.id%type) RETURN NUMBER ;  
-     
-     
-END BOB_PKG; 
+create or replace PACKAGE BOB_PKG AS 
+	PROCEDURE SUBIRORDENUSO (P_IDUSO BOB_USO.ID%TYPE);
+	PROCEDURE BAJARORDENUSO (P_IDUSO BOB_USO.ID%TYPE);
+	FUNCTION DIAMETROACTUAL (P_BOBINA BOB.ID%TYPE) RETURN NUMBER ;
+	FUNCTION PESOACTUAL (P_BOBINA BOB.ID%TYPE) RETURN NUMBER ;
+	FUNCTION METROSACTUAL (P_BOBINA BOB.ID%TYPE) RETURN NUMBER ;
+	FUNCTION METROSUSO (P_USO BOB_USO.ID%TYPE) RETURN NUMBER ;
+	FUNCTION SDIAMETROS (P_USO BOB_USO.ID%TYPE) RETURN VARCHAR2 ;
+	FUNCTION PRECIOPAPEL (P_TIPO BOB_TIPO.ID%TYPE) RETURN NUMBER;
+	FUNCTION STOCK (P_TIPO BOB_TIPO.ID%TYPE) RETURN NUMBER;
+END BOB_PKG;
 
 CREATE OR REPLACE PACKAGE BODY BOB_PKG AS
 	G_IDORDEN BOB_ORDEN.ID%TYPE;
@@ -237,6 +220,18 @@ BEGIN
 		FROM BOB_USO,BOB WHERE BOB_USO.ID = P_USO AND BOB_USO.BOBINA = BOB.ID;
 	RETURN V_METROS;
 END METROSUSO; 
+
+FUNCTION SDIAMETROS (P_USO BOB_USO.ID%TYPE) RETURN VARCHAR2 IS
+	V_DIAM VARCHAR2(20);  
+BEGIN
+	SELECT	TO_CHAR(INICIO,'9000') || ' ->' || TO_CHAR(FIN,'9000') 
+		INTO V_DIAM 
+		FROM BOB_USO 
+		WHERE BOB_USO.ID = P_USO ;
+	RETURN V_DIAM;	
+	EXCEPTION 
+		WHEN NO_DATA_FOUND THEN	RETURN '---';	
+END SDIAMETROS; 
 
 PROCEDURE ELIMINARORDEN (P_ORDEN BOB_ORDEN.ID%TYPE) AS V_BOBINASUSADAS NUMBER;
 BEGIN
