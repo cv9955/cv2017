@@ -8,7 +8,7 @@
 
 ## 300 - BOBINAS MAIN
 > Grafico de Stock
-'''SQL
+```SQL
 SELECT  B.TIPO, B.FORMATO , B.KILOS ,T.TIPO_PAPEL
   FROM  ( 
     SELECT FORMATO , TIPO , SUM(PESO * PSTOCK / 100) AS KILOS 
@@ -17,13 +17,13 @@ SELECT  B.TIPO, B.FORMATO , B.KILOS ,T.TIPO_PAPEL
       GROUP BY FORMATO,TIPO
 ) B, BOB_TIPO T
   WHERE B.TIPO = T.ID
-'''
+```
 ![pag300.png](/img/pag300.png)
 
 
 ## 301 - STOCK DIALOG
 > Lista de Bobinas, filtrado por Tipo y Formato 
-'''SQL
+```SQL
 SELECT ID, TIPO, FORMATO, GRAMAJE, PESO, PSTOCK,
     BOB_PKG.DIAMETROACTUAL(ID) AS DIAMETRO,
     ROUND(PSTOCK * PESO /FORMATO / GRAMAJE * 1000) AS METROS 
@@ -31,7 +31,7 @@ FROM BOB
 	WHERE ESTADO IN (1,2) 
 	AND FORMATO = :P301_FORMATO
 	AND TIPO = :P301_TIPO
-'''
+```
 ![pag301.png](/img/pag301.png)
 
 ## 302 - BOBINA POPUP
@@ -41,7 +41,7 @@ FROM BOB
 ## 303 - BOBINAS CORRUGADO 21 *
 Planilla de Corrugado, Baja de Stock
 ![pag303.png](/img/pag303.png)
-'''SQL
+```SQL
 SELECT D.ID,D.ID_CORR,D.FORMATO,D.ORDEN,D.CALIDAD,
 	PROD_PKG.MetrosCorrugado(D.ID) AS METROS , 
 	'<a href=javascript:$s("P303_ORDEN_A_BORRAR",'||D.ID||') class="fa fa-trash" ></a>' as BORRAR,
@@ -50,9 +50,9 @@ SELECT D.ID,D.ID_CORR,D.FORMATO,D.ORDEN,D.CALIDAD,
 	FROM CABS_CORR_D D
 	WHERE FECHA = :P303_FECHA
 	ORDER BY ORDEN;
-'''
+```
 
-'''SQL
+```SQL
 SELECT U.ID, U.ORDEN, U.BOBINA,	B.TIPO, B.FORMATO, B.GRAMAJE,
 	BOB_PKG.SDIAMETROS (U.ID) DIAMETRO ,
 	BOB_PKG.METROSUSO  (U.ID) METROS ,
@@ -64,7 +64,7 @@ SELECT U.ID, U.ORDEN, U.BOBINA,	B.TIPO, B.FORMATO, B.GRAMAJE,
 	AND U.LUGAR = 1
 	AND U.BOBINA = B.ID
 	ORDER BY U.ORDEN
-''' 
+``` 
 ### javascript
 > #APP_IMAGES#bobinas_corrugado.js
 [js/bobinas_corrugado.js](/js/bobinas_corrugado.js)
