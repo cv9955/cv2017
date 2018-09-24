@@ -66,34 +66,32 @@ SELECT U.ID, U.ORDEN, U.BOBINA,	B.TIPO, B.FORMATO, B.GRAMAJE,
 	ORDER BY U.ORDEN
 ``` 
 ### javascript
-> #APP_IMAGES#bobinas_corrugado.js
-[bobinas_corrugado.js](/js/bobinas_corrugado.js)
+> [bobinas_corrugado.js](/js/bobinas_corrugado.js)
 
 ### Dynamic Actions
-- P303_ID_TO_DELETE 
 ```SQL 
+// P303_ID_TO_DELETE 
 DELETE FROM BOB_USO WHERE ID = :P303_ID_TO_DELETE;
-```
-- P303_ID_A_SUBIR
-```SQL 
+
+// P303_ID_A_SUBIR
 BOB_PKG.SUBIRORDENUSO(:P303_ID_A_SUBIR);
-```
-- P303_ID_A_BAJAR
-```SQL 
+
+// P303_ID_A_BAJAR
 BOB_PKG.BAJARORDENUSO(:P303_ID_A_BAJAR);
-```
-- P303_ORDEN_A_SUBIR
-```SQL 
+
+// P303_ORDEN_A_SUBIR
 PROD_PKG.SUBIR_ORDEN_CORRUGADO(:P303_ORDEN_A_SUBIR);
-```
-- P303_ORDEN_A_BAJAR
-```SQL 
+
+// P303_ORDEN_A_BAJAR
 PROD_PKG.BAJAR_ORDEN_CORRUGADO(:P303_ORDEN_A_BAJAR);
-```
-- P303_ORDEN_A_BORRAR
-```SQL 
+
+// P303_ORDEN_A_BORRAR
 PROD_PKG.BORRAR_ORDEN_CORRUGADO(:P303_ORDEN_A_BORRAR);
 ```
+
+## 331 - LISTADO
+> Listado Stock Completo (Enteras y puchos)
+
 
 ## 310 - BOBINAS COMPRAS
 > Ultimos Ingresos, estadisticas de Compras
@@ -143,23 +141,46 @@ END;
 > Planilla Ingreso Imprime Planilla, Etiquetas
 ![pag314.png](/img/pag314.png)
 
-## 315 - IMPRIMIR Planilla 40
-![pag315.pdf](/pdf/pag315.png)
+## 315 - IMPRIMIR Planilla
+![pag315.png](/img/pag315.png)
+[pag315.pdf](/pdf/pag315.pdf)
 
-## 316 - IMPRIMIR Etiquetas 41
-![pag316.pdf](/pdf/pag316.png)
+## 316 - IMPRIMIR Etiquetas
+![pag316.png](/img/pag316.png)
+[pag316.pdf](/pdf/pag316.pdf)
 
 ### Package BOB_PRINT
 [bob_print.sql](/sql/bob_print.sql)
 
-## 330 - RESUMEN STOCK :key: 1
+## 330 - RESUMEN STOCK :key: 12
 > Stock Actual, Valorizado, Compras vs Corrugado
 
-## 331 - LISTADO COMPLETO :key: 10
-> Listado Completo, incluye usadas y anuladas
+## 331 - USADAS
+> Listado Bobinas Usadas (incluye anuladas)
 
-## 332 - RESUMEN MENSUAL :key: 4
+## 332 - RESUMEN MENSUAL :key:
 > Compras vs Corrugado Mensual, Grafico ultimos años
+![pag332.png](/img/pag332.png)
+### VIEW_BOB_MENSUAL
+```SQL
+CREATE OR REPLACE FORCE VIEW "VIEW_BOB_MENSUAL" ("PERIODO", "COMPRAS", "CORRUGADO") AS 
+  SELECT PERIODO, SUM(COMPRAS) COMPRAS,SUM(CORRUGADO) CORRUGADO FROM (
+		SELECT TO_CHAR(O.FECHA,'YYYY/MM') PERIODO,
+            SUM(BOB.PESO) COMPRAS,0 CORRUGADO
+            FROM BOB_ORDEN O,BOB 
+            WHERE O.ID = BOB.ORDEN_INGRESO
+            GROUP BY TO_CHAR(O.FECHA,'YYYY/MM'),0
+		UNION ALL
+        SELECT TO_CHAR(U.FECHA,'YYYY/MM') PERIODO,0 COMPRAS,
+            ROUND(SUM(BOB.PESO * U.USO / 100)) CORRUGADO
+            FROM BOB_USO U,BOB
+            WHERE U.BOBINA = BOB.ID
+            GROUP BY TO_CHAR(U.FECHA,'YYYY/MM'),0
+		)
+		GROUP BY PERIODO
+/
+```
 
 ## 333 - RESUMEN ANUAL :key: 16 17
 > Resumen Anual, Compras vs Corrugado, Graficos x Tipo y Formato 
+
