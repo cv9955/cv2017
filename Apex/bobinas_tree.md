@@ -2,8 +2,11 @@
 
 ## MenuBar
 - Bobinas > P300
+  - Listado > P304
+    - Usadas  > P331
   - Corrugado > P303
   - Compras  > P310
+    - Mensual > P332
   - Stock  > P330
 
 ## 300 - BOBINAS MAIN
