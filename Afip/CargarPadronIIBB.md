@@ -52,12 +52,12 @@ Load DATA
 
 ### Ejecucion
 
-Copiar el archivo descargado con el nombre "PadronRgsPer092018.txt" a D:\
+Copiar el archivo descargado con el nombre "PadronRgsPer092018.txt" a D:\afip
 
 ejecutar CMD (modo admin)
 
 ```
-D:\> sqlldr control=import_padron.ctl data=PadronRgsPer092018.txt discard=datos.dis bad=datos.bad log=datos.log 
+D:\afip> sqlldr control=import_padron.ctl data=PadronRgsPer092018.txt discard=datos.dis bad=datos.bad log=datos.log 
 ```
 
 ejecutar sqlPlus
@@ -77,6 +77,6 @@ SQL>  INSERT INTO CLI_IIBB (CUIT,DESDE,HASTA,VALOR)
         WHERE T2.CUIT = REPLACE(T1.CUIT,'-','')
       );
 
-      COMMIT:
+      COMMIT;
 ```
 
