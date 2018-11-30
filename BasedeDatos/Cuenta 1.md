@@ -1,141 +1,177 @@
-# Cuenta 1
-
-
-
+# Cuenta Corriente
 ## CABS_ENTREGAS_M
 ```SQL
 CREATE TABLE vic.cabs_entregas_m (
-    id            NUMBER NOT NULL,
+    id            NUMBER NOT NULL,	-- pk
     fecha         DATE NOT NULL,
-    cliente       NUMBER NOT NULL,
-    iibb          NUMBER(*,4),
+    cliente       NUMBER NOT NULL,	--> CLI
+    iibb          NUMBER(*,4),		--# CLI_IIBB 
     remito        NUMBER NOT NULL,
-    factura_id    NUMBER,
-    dfiscal       NUMBER,
-    deposito      NUMBER,
-    status        NUMBER DEFAULT 1 NOT NULL, -- 1 PREPARADO 2 EMITIDO 3 REVISADO -1 ANULADO
+    factura_id    NUMBER,			--> CABS_FACTURAS
+    dfiscal       NUMBER,		--> CLI_DFISCAL
+    deposito      NUMBER,		--> CLI_DEPOSITO
+    status        NUMBER DEFAULT 1 NOT NULL, --> LOV_ESTADO_ENTREGA
     id_viaje      NUMBER,
-    notas         VARCHAR2(400 BYTE),
     subt_neto     NUMBER(*,2),
     subt_iva      NUMBER(*,2),
     subt_iibb     NUMBER(*,2),
     total         NUMBER(*,2),
+    notas         VARCHAR2(400 BYTE),	
     created_by    VARCHAR2(20 BYTE),
     created_fec   DATE	
 )
 ```
+### LOV_ESTADO_ENTREGA
+|VALUE|DISPLAY|
+|---|---|
+|1|PREPARADO|
+|2|EMITIDO|
+|3|REVISADO|
+|-1|ANULADO|
 
 ## CABS_ENTREGAS
 ```SQL
 CREATE TABLE vic.cabs_entregas (
-    id            NUMBER NOT NULL,	-- :KEY:
-    id_cab        NUMBER NOT NULL,  --> CABS_ENTREGAS_M
+    id            NUMBER NOT NULL,	-- pk
+    id_cab        NUMBER NOT NULL,	--> CABS_ENTREGAS_M
     art           NUMBER(*,0),		--> ART
     cant          NUMBER,
     precio        NUMBER(*,4),
     iva           NUMBER(*,4),
     detalle       VARCHAR2(40 BYTE),
-    pedido        NUMBER,			--> CABS_PEDIDOS
+    pedido        NUMBER,		--> CABS_PEDIDOS
     created_by    VARCHAR2(20 BYTE),
     created_fec   DATE	
 )
 ```
 
-
 ## CABS_FACTURAS
 ```SQL
-  CREATE TABLE "VIC"."CABS_FACTURAS" 
-   (	"ID" NUMBER(*,0) NOT NULL ENABLE, 
-	"FECHA" DATE, 
-	"TIPO_CAB" NUMBER, 
-	"PUNTO_VENTA" NUMBER(*,0), 
-	"NRO_CAB" NUMBER(*,0), 
-	"CUIT" VARCHAR2(11 BYTE), 
-	"DFISCAL" VARCHAR2(80 BYTE), 
-	"TOTAL_OPERACION" NUMBER(*,2), 
-	"TOTAL_NO_GRAVADO" NUMBER(*,2), 
-	"NETO_GRAVADO" NUMBER(*,2), 
-	"IMPUESTO_1" NUMBER(*,2), 
-	"IMPUESTO_2" NUMBER(*,2), 
-	"IMPORTE_OPER_EXENTAS" NUMBER(*,2), 
-	"IMPORTE_PERCEP_NAC" NUMBER(*,2), 
-	"IMPORTE_PERCEP_IIBB" NUMBER(*,2), 
-	"IMPORTE_PERCEP_MUNI" NUMBER(*,2), 
-	"IMPORTE_IMP_INTERNOS" NUMBER(*,2), 
-	"CAI" VARCHAR2(14 BYTE), 
-	CONSTRAINT "CABS_FACTURAS_PK" PRIMARY KEY ("ID") ENABLE, 
-	CONSTRAINT "CABS_FACTURAS_FK1" FOREIGN KEY ("TIPO_CAB")
-		REFERENCES "VIC"."CABS_TIPO" ("ID") ENABLE
-   )
+CREATE TABLE vic.cabs_facturas (
+    id                     NUMBER(*,0) NOT NULL,
+    fecha                  DATE,
+    tipo_cab               NUMBER,	--> LOV_TIPO_CAB
+    punto_venta            NUMBER(*,0),
+    nro_cab                NUMBER(*,0),
+    cuit                   VARCHAR2(11 BYTE),
+    dfiscal                VARCHAR2(80 BYTE),
+    total_operacion        NUMBER(*,2),
+    total_no_gravado       NUMBER(*,2),
+    neto_gravado           NUMBER(*,2),
+    impuesto_1             NUMBER(*,2),
+    impuesto_2             NUMBER(*,2),
+    importe_oper_exentas   NUMBER(*,2),
+    importe_percep_nac     NUMBER(*,2),
+    importe_percep_iibb    NUMBER(*,2),
+    importe_percep_muni    NUMBER(*,2),
+    importe_imp_internos   NUMBER(*,2),
+    cai                    VARCHAR2(14 BYTE)
+)
 ```
+
+###LOV_TIPO_CAB
+|VALUE|DISPLAY|
+|---|---|
+|0|SALDO INICIAL|
+|1|FACTURA A|
+|2|NOTA DEBITO|
+|3|NOTA CREDITO|
+|9|RECIBO|
+|19|FACT EXPO|
+|101|REMITO|
+|102|PAGO|
+
+
 
 ## CABS_FACTURAS_DETALLE
 ```SQL
-  CREATE TABLE "VIC"."CABS_FACTURAS_DETALLE" 
-   (	"ID" NUMBER NOT NULL ENABLE, 
-	"ID_CAB" NUMBER, 
-	"FECHA" DATE, 
-	"TIPO_CAB" NUMBER, 
-	"PUNTO_VENTA" NUMBER, 
-	"NRO_CAB" NUMBER, 
-	"CANTIDAD" NUMBER(*,2), 
-	"UNIDAD" VARCHAR2(2 BYTE), 
-	"PRECIO" NUMBER(*,2), 
-	"BONIFICACION" NUMBER(*,2), 
-	"AJUSTE" NUMBER(*,2), 
-	"SUBTOTAL" NUMBER(*,2), 
-	"IVA" NUMBER(*,2), 
-	"MODO" VARCHAR2(1 BYTE), 
-	"ANULADO" VARCHAR2(1 BYTE), 
-	"TEXTO" VARCHAR2(75 BYTE), 
-	CONSTRAINT "CABS_FACTURAS_DETA_ID_PK" PRIMARY KEY ("ID") ENABLE, 
-	CONSTRAINT "CABS_FACTURAS_DETA_ID_CAB_FK" FOREIGN KEY ("ID_CAB")
-		REFERENCES "VIC"."CABS_FACTURAS" ("ID") ON DELETE CASCADE ENABLE
-   )
+CREATE TABLE vic.cabs_facturas_detalle (
+    id             NUMBER NOT NULL,
+    id_cab         NUMBER(*,0),	--> CABS_FACTURAS
+    fecha          DATE,
+    tipo_cab       NUMBER,	--> LOV_TIPO_CAB
+    punto_venta    NUMBER,
+    nro_cab        NUMBER,
+    cantidad       NUMBER(*,2),
+    unidad         VARCHAR2(2 BYTE),
+    precio         NUMBER(*,2),
+    bonificacion   NUMBER(*,2),
+    ajuste         NUMBER(*,2),
+    subtotal       NUMBER(*,2),
+    iva            NUMBER(*,2),
+    modo           VARCHAR2(1 BYTE),
+    anulado        VARCHAR2(1 BYTE),
+    texto          VARCHAR2(75 BYTE)
+)
 ```
-
 
 ## CABS_RECIBOS 
 ```SQL
-  CREATE TABLE "VIC"."CABS_RECIBOS" 
-   (	"ID" NUMBER(*,0) NOT NULL ENABLE, 
-	"FECHA" DATE, 
-	"TIPO_CAB" NUMBER, 
-	"PUNTO_VENTA" NUMBER(*,0), 
-	"NRO_CAB" NUMBER(*,0), 
-	"CUIT" VARCHAR2(11 BYTE), 
-	"DFISCAL" VARCHAR2(80 BYTE), 
-	"TOTAL_OPERACION" NUMBER(*,2), 
-	"EFT" NUMBER, 
-	"RETENCIONES" NUMBER, 
-	"DEPOSITO" NUMBER(*,2), 
-	"COMPENSACION" NUMBER(*,2), 
-	"ID_RAZON" NUMBER, 
-	"OBS" VARCHAR2(400 BYTE), 
-	 CONSTRAINT "CABS_RECIBO_PK" PRIMARY KEY ("ID")
-	 CONSTRAINT "NRO_RECIBO" UNIQUE ("PUNTO_VENTA", "NRO_CAB")
-   ) 
+CREATE TABLE vic.cabs_recibos (
+    id                NUMBER(*,0) NOT NULL, --pk
+    fecha             DATE,
+    tipo_cab          NUMBER,	
+    punto_venta       NUMBER(*,0),
+    nro_cab           NUMBER(*,0),
+    cuit              VARCHAR2(11 BYTE),
+    dfiscal           VARCHAR2(80 BYTE),
+    total_operacion   NUMBER(*,2),
+    eft               NUMBER,
+    retenciones       NUMBER,
+    deposito          NUMBER(*,2),
+    compensacion      NUMBER(*,2),
+    id_razon          NUMBER,	--> CLI_DFISCAL
+    obs               VARCHAR2(400 BYTE),
+    cheques           NUMBER(*,2)	--# DOCS_CHEQUES
+)
 ```
 
 ## DOCS_CHEQUES
 ```SQL
-  CREATE TABLE "VIC"."DOCS_CHEQUES" 
-   (	"ID" NUMBER NOT NULL ENABLE, 
-	"FECHA" DATE, 
-	"CHEQUE" NUMBER, 
-	"BANCO" VARCHAR2(20 BYTE), 
-	"VENCIMIENTO" DATE, 
-	"CUENTA" VARCHAR2(20 BYTE), 
-	"CLIENTE" VARCHAR2(80 BYTE), 
-	"IMPORTE" NUMBER(*,2), 
-	"ID_RAZON" NUMBER, 
-	"RECIBO" NUMBER, 
-	"KEY" NUMBER, 
-	"RSOCIAL" VARCHAR2(200 BYTE), 
-	 CONSTRAINT "DOCS_CHEQUES_PK" PRIMARY KEY ("ID") ENABLE, 
-	 CONSTRAINT "DOCS_CHEQUES_UK1" UNIQUE ("KEY")  ENABLE
-   )
-```   
+CREATE TABLE vic.docs_cheques (
+    id            NUMBER NOT NULL,	--pk
+    key           NUMBER,		--uk	
+    recibo        NUMBER(*,0),		--> CABS_RECIBOS	
+    id_razon      NUMBER(*,0),		--> CLI_DFISCAL	
+    fecha         DATE,
+    cheque        NUMBER,
+    banco         VARCHAR2(20 BYTE),
+    cuenta        VARCHAR2(20 BYTE),	
+    cliente       VARCHAR2(80 BYTE),
+    rsocial       VARCHAR2(200 BYTE),	
+    importe       NUMBER(*,2),
+    vencimiento   DATE
+)
+```  
+ 
+## DOCS_RETEN
+```SQL
+CREATE TABLE vic.docs_reten (
+    id         NUMBER NOT NULL,  --PK
+    recibo     NUMBER,  	--> CABS_RECIBOS
+    tipo_ret   NUMBER,  	--> DOCS_RETEN_TIPO
+    numero     NUMBER,
+    fecha      DATE,
+    importe    NUMBER(*,2)
+)
+```  
+
+## DOCS_RETEN_TIPO
+```SQL
+CREATE TABLE vic.docs_reten_tipo (
+    id          NUMBER NOT NULL,	--pk
+    codigo      VARCHAR2(10 BYTE),
+    retencion   VARCHAR2(80 BYTE)
+)
+```
+###LOV_TIPO_RETEN
+|VALUE|DISPLAY|
+|---|---|
+|1|GANANCIAS|
+|2|IVA|
+|3|IIBB|
+|4|PATRONALES|
+
 
 ## CABX_FACT_RECIBO
 ```SQL
@@ -174,30 +210,21 @@ CREATE TABLE vic.cabs_entregas (
 
 ## V1_FACTURAS
 ```SQL
-		SELECT 
-            ID,
-            TIPO_CAB ,
-            FECHA ,
-            (SELECT ID FROM CLI_DFISCAL WHERE CUIT = F.CUIT) ID_RAZON,
-            CUIT,
-            DFISCAL ,
-            TO_CHAR(PUNTO_VENTA,'FM0000') || '-' || TO_CHAR(NRO_CAB,'FM00000000') NRO,
-            TOTAL_OPERACION      
-		FROM CABS_FACTURAS F 
-		
-		UNION ALL
-
-		SELECT
-            -ID ID,
-            0 TIPO_CAB ,
-            NVL(SALDO_FEC,TO_DATE('01012018','DDMMYYYY')) FECHA ,
-            ID ID_RAZON,
-            CUIT,
-            RAZON_SOCIAL DFISCAL ,
-            'SALDO INICIAL' NRO,
-            SALDO_INI 
-			FROM CLI_DFISCAL
-		WHERE NVL(SALDO_INI,0) != 0
+SELECT 
+	ID ,
+	TIPO_CAB ,
+	CASE WHEN TIPO_CAB IN (3) THEN -1 ELSE 1 END SIGNO,
+	FECHA ,
+	(SELECT ID FROM CLI_DFISCAL WHERE CUIT = F.CUIT) ID_RAZON,
+	CUIT ,
+	DFISCAL ,
+	NRO_CAB NRO ,
+	TOTAL_OPERACION TOTAL,
+	(SELECT SUM(X.VALOR) FROM cabX_fact_recibo X WHERE F.ID = x.id_factura) PAGO,
+	(SELECT LISTAGG(R.NRO,',')within group(order by y.id_factura) 
+		FROM cabX_fact_recibo Y ,v1_recibos R
+			WHERE y.id_recibo = r.id and y.id_factura = f.id) recibos
+FROM CABS_FACTURAS F ;
 ```
 
 ## CTACTE
