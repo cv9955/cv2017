@@ -1,0 +1,32 @@
+Convencion de Nombres
+
+## TABLAS
+
+BOBINAS
+	id
+	tipo_id
+	formato
+	gramaje
+	peso
+	diametro
+	pstock
+	status
+	
+	
+BOB_USO
+BOB_
+
+CLIENTES
+
+ARTICULOS
+
+## COLUMNAS
+
+pk - id
+fk - bobina_id
+
+lov - 
+
+status
+
+

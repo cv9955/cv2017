@@ -1,0 +1,141 @@
+.art_3 {background-color : #d7ccc8 	!important}
+.art_2 {background-color : #cfd8dc 	!important}
+.art_1 {background-color : #e0e0e0 	!important} 
+
+.art_estado1 {color: #f4d03f }
+.art_estado2 {color: #f5b041 }
+.art_estado3{color: #52be80 ;
+}
+.art_estado4{color: #3498db }
+.art_estado5{color: #af7ac5 }
+.art_estado6{color: #CCCCCC }
+.art_estado-1{color: #e74c3c ;
+		text-decoration: line-through solid red;
+	}
+
+
+.medida_plancha	{
+    background-color: PaleGreen !important;
+    font-weight: bold;
+    text-align: CENTER;
+}
+.medida_caja	{
+	background-color : PaleTurquoise 	!important;
+    font-weight: bold;
+    text-align: CENTER;
+	font-style:italic;
+}
+
+.stock_pedido {
+	font-family:cursive;
+	text-align:right;
+	background-color : #C3EFB2 !important	
+}
+
+.stock_plancha	{
+	font-family:cursive;
+	text-align:right;
+	background-color : #EFDEB2 !important;
+	color:brown !important;
+	font-weight:bold;
+	}
+.stock_caja		{
+	font-family:cursive;	
+	background-color : #CBEBF5 !important
+	}
+
+.precio_valido {
+
+}	
+
+.precio_viejo {
+
+}
+.precio_desactualizado{
+	
+}
+	
+.contado_ok{
+	font-weight:bold;
+	text-align:right;
+	color:black !important;	
+	background-color : #98D7EA !important
+}
+.sin_contar	{
+	font-style:italic;
+	font-weight:bold;
+	text-align:right;
+	color:black !important;
+	background-color : #CBEBF5 !important
+}
+.sin_terminar	{
+	font-weight:bold;
+	text-align:left;
+	color:#626567 !important;	
+	background-color : #CBEBF5 !important
+}
+
+
+.calculo{
+	background-color : Lavender!important;
+	color:Green	!important;
+	font-weight:bold;
+    text-align: CENTER;
+}
+
+.col-calidad{
+	font-weight:BOLD;
+    text-align: center;
+}
+.KRAFT	{
+	background-color : #FBEEE6 !important;
+	color:#5D6D7E	!important;
+}
+.LINNER	{
+	background-color : #F7DC6F !important;
+	color:#AF601A	!important;
+}
+.MISIO	{
+	background-color : #F0B27A !important;
+	color:#784212	!important;
+}
+.BLANCO	{
+	background-color : #FBFCFC !important;
+	color:#31B0D5 !important;
+}
+.DT	{
+	font-style:italic;
+	font-family:cursive;
+}
+
+
+.PEDIDO_PENDIENTE {
+	background-color : #FEF9E7 		!important;
+	font-weight: 400;
+    text-align: right;
+	}
+
+.PEDIDO_PARCIAL {
+	background-color : ORANGE 		!important;
+	font-weight: 400;
+    text-align: right;
+	font-style:italic;
+	font-family:cursive;
+	}
+
+
+.PEDIDO_COMPLETO {
+	background-color : #ABEBC6 		!important;
+	font-weight: 700;
+    text-align: right;
+	font-style:italic;
+	font-family:cursive;
+	}
+	
+.PEDIDO_SUSPENDIDO {
+	color : #FDEDEC 		!important;
+	background-color : #CB4335 		!important;
+	font-weight: 700;
+    text-align: right;
+	font-family:cursive;
+	}	
