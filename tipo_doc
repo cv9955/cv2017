@@ -1,0 +1,31 @@
+CAJAS
+ -1 Diferencia a revisar
+  1 Efectivo
+  2 Caja 
+  9 Redondeo 
+  
+
+
+10 Cheques
+   11 Cheques Terceros
+   12 Cheques Propios
+   19 Cheques 2017 
+   
+   
+20 Retenciones
+   21 Gcias
+   22 IVA
+   23 IIBB
+   24 Patronales
+   25 SIJP
+
+100 Compensacion
+
+1000 Cuentas Bancarias
+     1001 Credicoop
+     1002 Icbc
+     
+2000 Cuentas Socios
+     2001 Am
+     2002 Ca
+     
