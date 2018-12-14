@@ -2,9 +2,31 @@
 
 ## COLUMNAS
 - ID 
-- VAL
+- LABEL   -> CODIGO / NOMBRE / DETALLE -> VARCHAR2  TEXTO A MOSTRAR EN LISTAS 
 - STATUS  -> LOV_STATUS.ID 
-- 
+
+- REV  -> SI GUARDA CAMBIOS EN LOG 
+
+- TIPO ->
+
+- OBS  -> 
+
+- CREATED_BY
+- CREATED_FEC
+- UPDATED_BY
+- UPDATED_FEC
+- FIRMADO_BY  
+- FIRMADO_FEC
+
+ 
+ 
+ 
+### FIRMADO : STATUS 4 - FIRMADO_BY/FIRMADO_FEC - GUARDA LOG
+
+  
+ 
+- CLIENTE_ID  -> RELACIONES
+	
 
 ##TABLAS
 
@@ -46,4 +68,57 @@
 	3 ACTIVO 
 	
 - LOV_STATUS_ARTICULO
+
+## TRIGGERS
+CONSTRUCTOR >> TRG_NEW_NOMBRE-TABLA
+´´´SQL 
+create or replace TRIGGER TRG_NEW_ART
+BEFORE INSERT ON ART
+FOR EACH ROW 
+BEGIN
+	IF INSERTING THEN
+		:new.created_fec:= sysdate;
+		:new.created_by := nvl(v('APP_USER'),USER);
+	  
+		IF :new.ID IS NULL THEN
+			// si usa correlativos
+			SELECT MAX(ID) + 1 INTO :new.ID FROM ART;
+			
+			// si usa secuencia
+			// SELECT "CABS_CORR_C_SEQ".nextval into :new.ID FROM sys.dual; 
+			
+		END IF;
+		
+		IF :new.status IS NULL THEN
+			:new.status := 1;
+		END IF;
+		
+		// INICIO DE PARAMETROS
+		
+	END IF;
+END;
+´´´
+
+
+REGISTRO DE MOVIMIENTOS >>
+
+CREATE OR REPLACE TRIGGER TRG_VTA_RECIBOS_UPD 
+BEFORE UPDATE ON VTA_RECIBOS 
+  for each row 
+BEGIN
+    :new.UPDATED := sysdate;
+    :new.UPDATED_by := nvl(v('APP_USER'),USER);   
+END;
+
+
+
+
+
+
+
+
+
+
+
+
   
