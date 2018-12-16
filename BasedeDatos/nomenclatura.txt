@@ -1,32 +1,87 @@
 Convencion de Nombres
+- Nombres de Tabla en plural
 
-## TABLAS
+## TABLAS PRINCIPALES  (BOBINAS, ARTICULOS , CLIENTES)
+- PRIMARY KEY : ID 
+  - CORRELATIVOS  >> MAX(ID) + 1 
+ 
+- FOREING KEYS : ART_TIPO_ID  >> nombre_tabla_ID
+  
+- STATUS number
 
-BOBINAS
-	id
-	tipo_id
-	formato
-	gramaje
-	peso
-	diametro
-	pstock
-	status
-	
-	
-BOB_USO
-BOB_
+- AUDITCOLS
+  - CREATED  >> Status 1 - DESING
+  - CREATED_BY
+  - UPDATED  >> Status 2 - READY
+  - UPDATED_BY
 
-CLIENTES
+- SIGNEDCOLS  
+  - SIGNED  >> Datos revisados y bloqueados Status 5-SIGNED
+  - SIGNED_BY 
+  - REVISION >> rev++ - HIST_ARTICULOS status 6-OBSOLETE
+ 
+- COTIZCOLS 
+  - COTIZ_DESDE
+  - COTIZ_HASTA
+  - COTIZ_BY
+  - COTIZ_VALOR 
+  
+- IDENTIFICACION  VARCHAR2(20)
+  - CODIGO  
+  - nombre_tabla : CLIENTE  
+  - DETALLE  
 
-ARTICULOS
+- VALORES
+  - ENTEROS      LARGO 		>> NUMBER(4,0)
+  - PORCENTAJE   P_STOCK  	>> NUMBER (0 A 100)  
+  - REALES 		 MULT		>> NUMBER
 
-## COLUMNAS
+- PARAMETROS
+  - AJ_PRECIO
 
-pk - id
-fk - bobina_id
+ 
+## TABLAS LISTA DE VALORES (BOB_TIPO, ART_PALLET)
+- ID >> GENERADO MANUAL
+- Nombres en singular, con referencia inicial
+- No lleva AUDITCOLS
+- No realizan cambios usuarios
+- Se usan para llenar los APEX LOVS (LOV_BOB_TIPO)
+- UNIQUE ALFA KEY : KEY  >> CHAR(N) 
 
-lov - 
 
-status
+## TABLAS INFORMACION (CLI_DEPOSITOS)
+- Nombres en plural , con referencia inicial
+- ID 		  >> SEQ_CLI_DEPOSITOS
+- CLIENTE_ID  >> referencia padre
+- DEPOSITO    >> nombre_tabla_singular
+- STATUS      >> 
+- AUDITCOLS
 
+## TABLAS COTIZACIONES (CON VALIDEZ TEMPORAL)
 
+- ID >> SEQ_COTIZACIONES
+- CLIENTE_ID 
+- AJ_COMISION_VENDEDOR
+- AJ_COTIZ_CLIENTE
+- AJ_COTIZ_ARTICULO
+- AJ_PRECIO_FINAL
+- ARTICULO_ID  >> referencia padre
+- CALIDAD_ID
+- COSTO_PLANCHA
+- COSTO_TERMINADO
+- M2
+
+- DESDE   >> FECHA COTIZACION
+- HASTA   >> NULL ( SE REEMPLAZA X FECHA DE SIGUIENTE COTIZACION)
+- VALOR   >> 
+- AUDITCOLS
+  - CREATED
+  - CREATED_BY
+  
+
+## TABLAS ACCIONES
+- Nombre 
+- Generan movimiento en stock
+
+ALTA_BOBINAS
+BAJA_BOBINAS
